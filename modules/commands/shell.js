@@ -6,7 +6,7 @@ module.exports.config = {
     hasPermssion: 2,
     description: "Execute shell commands",
     usePrefix: true,
-    credits: "Jonell Magallanes",
+    credits: "Vern",
     cooldowns: 3,
     commandCategory: "Utility",
 };
@@ -18,14 +18,30 @@ module.exports.run = async function ({ api, event, args }) {
     if (!command) {
         return api.sendMessage("Please provide a shell command to execute.", threadID, messageID);
     }
-        const teh = await api.sendMessage("Processing", threadID, messageID);
-    exec(command, (error, stdout, stderr) => {
-        if (error) {
-            return api.editMessage(`Error: ${error.message}`, teh.messageID ,threadID, messageID);
-        }
-        if (stderr) {
-            return api.editMessage(`Stderr: ${stderr}`, teh.messageID, threadID, messageID);
-        }
-        api.editMessage(`${stdout}`, teh.messageID, threadID, messageID);
-    });
+
+    try {
+        const processingMsg = await api.sendMessage("Processing...", threadID, messageID);
+
+        exec(command, (error, stdout, stderr) => {
+            let output = "";
+
+            if (error) {
+                output = `Error: ${error.message}`;
+            } else if (stderr) {
+                output = `Stderr: ${stderr}`;
+            } else {
+                output = stdout || "Command executed successfully, but no output.";
+            }
+
+            // Prevent overly long messages
+            if (output.length > 2000) {
+                output = output.substring(0, 1990) + "... [truncated]";
+            }
+
+            api.editMessage(output, processingMsg.messageID, threadID);
+        });
+
+    } catch (err) {
+        api.sendMessage(`Unexpected error: ${err.message}`, threadID, messageID);
+    }
 };
