@@ -6,77 +6,77 @@ module.exports.config = {
     name: "image",
     version: "1.0",
     hasPermission: 0,
-    description: "Finding Image from Pinterest",
-    credits: "Jonell Magallanes",
+    description: "Search and fetch images from Pinterest",
+    credits: "Vern",
     usePrefix: false,
     commandCategory: "Search",
-    usages: "[query]",
+    usages: "<query> -<number>",
     cooldowns: 0,
 };
 
 module.exports.run = async function ({ api, event, args }) {
+    const input = args.join(" ");
+    const cachePath = path.join(__dirname, "cache");
+
     try {
-        const keySearch = args.join(" ");
-
-        if (!keySearch.includes("-")) {
+        // Check for "-<number>" format
+        if (!input.includes("-")) {
             return api.sendMessage(
-                "⛔ 𝗜𝗻𝘃𝗮𝗹𝗶𝗱 𝗨𝘀𝗲\n━━━━━━━━━━━━━━━\n\nPlease enter the search query and number of images (1-99). Example: tomozaki -5",
-                event.threadID,
-                event.messageID
-            );
-        }
- api.sendMessage("Please Wait.....", event.threadID, event.messageID);
-        const keySearchs = keySearch.substr(0, keySearch.indexOf('-')).trim();
-        let numberSearch = parseInt(keySearch.split("-").pop().trim()) || 10;
-
-        if (isNaN(numberSearch) || numberSearch < 1 || numberSearch > 10) {
-            return api.sendMessage(
-                "⛔ 𝗜𝗻𝘃𝗮𝗹𝗶𝗱 𝗡𝘂𝗺𝗯𝗲𝗿\n━━━━━━━━━━━━━━━\n\nPlease enter a valid number of images (1-99). Example: wallpaper -5",
-                event.threadID,
-                event.messageID
+                "⛔ Invalid usage.\n\nPlease use the format: <search term> -<number>\nExample: wallpaper -5",
+                event.threadID, event.messageID
             );
         }
 
-        const apiUrl = `https://jonellccprojectapis10.adaptable.app/api/pin?title=${keySearch}&count=${numberSearch}`;
-        console.log(`Fetching data from API: ${apiUrl}`);
+        api.sendMessage("🔍 Searching images, please wait...", event.threadID, event.messageID);
 
+        // Extract query and number
+        const [query, countStr] = input.split("-");
+        const searchQuery = query.trim();
+        let count = parseInt(countStr.trim());
+
+        if (isNaN(count) || count < 1 || count > 10) {
+            return api.sendMessage(
+                "⛔ Invalid number of images.\nPlease enter a number between 1 and 10.\nExample: cat -3",
+                event.threadID, event.messageID
+            );
+        }
+
+        // API call
+        const apiUrl = `https://jonellccprojectapis10.adaptable.app/api/pin?title=${encodeURIComponent(searchQuery)}&count=${count}`;
         const res = await axios.get(apiUrl);
-        const data = res.data.data;
 
-        if (!data || data.length === 0) {
+        if (!res.data || !res.data.data || res.data.data.length === 0) {
             return api.sendMessage(
-                `No results found for your query "${keySearchs}". Please try with a different query.`,
-                event.threadID,
-                event.messageID
+                `❌ No images found for "${searchQuery}". Try another search.`,
+                event.threadID, event.messageID
             );
         }
 
-        const imgData = [];
+        const images = res.data.data.slice(0, count);
+        const attachments = [];
 
-        for (let i = 0; i < Math.min(numberSearch, data.length); i++) {
-            console.log(`Fetching image ${i + 1} from URL: ${data[i]}`);
-            const imgResponse = await axios.get(data[i], { responseType: "arraybuffer" });
-            const imgPath = path.join(__dirname, "cache", `${i + 1}.jpg`);
-            await fs.outputFile(imgPath, imgResponse.data);
-            imgData.push(fs.createReadStream(imgPath));
+        await fs.ensureDir(cachePath);
+
+        // Download images
+        for (let i = 0; i < images.length; i++) {
+            const imgRes = await axios.get(images[i], { responseType: "arraybuffer" });
+            const imgPath = path.join(cachePath, `image_${i + 1}.jpg`);
+            await fs.writeFile(imgPath, imgRes.data);
+            attachments.push(fs.createReadStream(imgPath));
         }
 
+        // Send message
         await api.sendMessage({
-            body: `📸 𝗣𝗶𝗻𝘁𝗲𝗿𝗲𝘀𝘁\n━━━━━━━━━━━━━━━\n\nHere are the top ${numberSearch} results for your query "${keySearchs}"`,
-            attachment: imgData,
+            body: `📸 Pinterest Image Results\nShowing ${count} result(s) for: "${searchQuery}"`,
+            attachment: attachments
         }, event.threadID, event.messageID);
 
-        console.log(`Images successfully sent to thread ${event.threadID}`);
+        // Cleanup
+        await fs.remove(cachePath);
 
-        await fs.remove(path.join(__dirname, "cache"));
-        console.log("Cache directory cleaned up.");
-
-    } catch (error) {
-        console.error("Error fetching images from Pinterest:", error);
-        return api.sendMessage(
-            "An error occurred while fetching images. Please try again later.",
-            event.threadID,
-            event.messageID
-        );
+    } catch (err) {
+        console.error("Image search error:", err);
+        api.sendMessage("⚠️ An error occurred while fetching images. Try again later.", event.threadID, event.messageID);
+        await fs.remove(cachePath);
     }
 };
