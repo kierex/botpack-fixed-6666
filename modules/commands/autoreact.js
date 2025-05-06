@@ -17,35 +17,46 @@ module.exports.config = {
 const autoreactFilePath = path.join(__dirname, 'autoreact.txt');
 
 module.exports.handleEvent = async function ({ api, event }) {
-  if (event.body !== null && event.isGroup && (!event.attachments || event.attachments.length === 0)) {
-    let autoreactStatus = 'off';
-    if (fs.existsSync(autoreactFilePath)) {
-      autoreactStatus = fs.readFileSync(autoreactFilePath, 'utf8').trim();
-    }
+  try {
+    if (
+      event.body &&
+      (event.isGroup || event.threadID) && 
+      (!event.attachments || event.attachments.length === 0)
+    ) {
+      let autoreactStatus = 'off';
+      if (fs.existsSync(autoreactFilePath)) {
+        autoreactStatus = fs.readFileSync(autoreactFilePath, 'utf8').trim();
+      }
 
-    if (autoreactStatus === 'on') {
-      axios.get(`https://ccprojectapis.ddns.net/api/message/emoji?text=${encodeURIComponent(event.body)}`)
-        .then(response => {
-          const emoji = response.data.emoji;
-          api.setMessageReaction(emoji, event.messageID, () => { }, true);
-        })
-        .catch(error => {
-          console.error('Error fetching auto reaction:', error);
-        });
+      if (autoreactStatus === 'on') {
+        const res = await axios.get(`https://ccprojectapis.ddns.net/api/message/emoji?text=${encodeURIComponent(event.body)}`);
+        const emoji = res.data?.emoji;
+
+        if (emoji) {
+          api.setMessageReaction(emoji, event.messageID, () => {}, true);
+        }
+      }
     }
+  } catch (error) {
+    console.error('AutoReact error:', error);
   }
 };
 
 module.exports.run = async function ({ api, event, args }) {
   const option = args[0]?.toLowerCase();
 
-  if (option === 'on') {
-    fs.writeFileSync(autoreactFilePath, 'on', 'utf8');
-    api.sendMessage('Auto react has been enabled.', event.threadID);
-  } else if (option === 'off') {
-    fs.writeFileSync(autoreactFilePath, 'off', 'utf8');
-    api.sendMessage('Auto react has been disabled.', event.threadID);
-  } else {
-    api.sendMessage('Invalid option. Use "?autoreact on" to enable or "?autoreact off" to disable auto reactions.', event.threadID);
+  try {
+    if (option === 'on') {
+      fs.writeFileSync(autoreactFilePath, 'on', 'utf8');
+      api.sendMessage('Auto react has been enabled.', event.threadID);
+    } else if (option === 'off') {
+      fs.writeFileSync(autoreactFilePath, 'off', 'utf8');
+      api.sendMessage('Auto react has been disabled.', event.threadID);
+    } else {
+      api.sendMessage('Invalid option. Use "?autoreact on" to enable or "?autoreact off" to disable auto reactions.', event.threadID);
+    }
+  } catch (error) {
+    console.error('Error updating auto react status:', error);
+    api.sendMessage('An error occurred while updating auto react status.', event.threadID);
   }
 };
