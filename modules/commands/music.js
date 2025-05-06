@@ -35,8 +35,10 @@ module.exports.run = async function ({ api, event, args }) {
 
     await api.editMessage(`⏱️ | Music Title has been Found: "${title}". Downloading...`, findingMessage.messageID);
 
-    const apiUrl = `https://joncll.serv00.net/yt.php?url=${url}`;
+    // Using the song name for the API URL
+    const apiUrl = `https://kaiz-apis.gleeze.com/api/apple-music?search=${encodeURIComponent(song)}`;
     const response = await axios.get(apiUrl);
+
     const { audio } = response.data;
 
     if (!audio) {
@@ -49,7 +51,7 @@ module.exports.run = async function ({ api, event, args }) {
       headers: { 'User-Agent': 'Mozilla/5.0' }
     });
 
-    const filePath = path.resolve(__dirname, 'cache', `${Date.now()}-${title}.mp3`);
+    const filePath = path.join(__dirname, 'cache', `${Date.now()}-${title}.mp3`);
     const fileStream = fs.createWriteStream(filePath);
 
     responseStream.data.pipe(fileStream);
@@ -59,30 +61,44 @@ module.exports.run = async function ({ api, event, args }) {
       const fileSizeInMB = stats.size / (1024 * 1024);
 
       if (fileSizeInMB > 25) {
-        await api.sendMessage(`❌ | The file size exceeds 25MB limit. Unable to send "${title}".`, event.threadID);
+        await api.sendMessage(`❌ | The file size exceeds the 25MB limit. Unable to send "${title}".`, event.threadID);
         fs.unlinkSync(filePath);
         return;
       }
 
-      const respoawait = await axios.get(`https://jonellccprojectapis10.adaptable.app/api/tinyurl?url=${audio}`);
-      const short = respoawait.data.shortenedUrl;
-      
-      await api.sendMessage({
-        body: `🎵 | Here is your music: "${title}"\n\nTitle: ${title}\nYoutube Link: ${url}\nDownload Link: ${short}`,
-        attachment: fs.createReadStream(filePath)
-      }, event.threadID);
+      try {
+        // Fetch the shortened link for the audio
+        const responseShortLink = await axios.get(`https://jonellccprojectapis10.adaptable.app/api/tinyurl?url=${encodeURIComponent(audio)}`);
+        const short = responseShortLink.data.shortenedUrl;
 
+        await api.sendMessage({
+          body: `🎵 | Here is your music: "${title}"\n\nTitle: ${title}\nYouTube Link: ${url}\nDownload Link: ${short}`,
+          attachment: fs.createReadStream(filePath)
+        }, event.threadID);
+
+        fs.unlinkSync(filePath);
+        api.unsendMessage(findingMessage.messageID);
+      } catch (error) {
+        console.error("Error generating shortened URL:", error);
+        await api.sendMessage(`❌ | Sorry, there was an error generating the music link: ${error.message}`, event.threadID);
+        fs.unlinkSync(filePath);
+      }
+    });
+
+    fileStream.on('error', async (error) => {
+      console.error("Error with file stream:", error);
+      await api.sendMessage(`❌ | Error while downloading the music file: ${error.message}`, event.threadID);
       fs.unlinkSync(filePath);
-      api.unsendMessage(findingMessage.messageID);
     });
 
     responseStream.data.on('error', async (error) => {
-      console.error(error);
+      console.error("Error with response stream:", error);
       await api.sendMessage(`❌ | Sorry, there was an error downloading the music: ${error.message}`, event.threadID);
       fs.unlinkSync(filePath);
     });
+
   } catch (error) {
-    console.error(error);
+    console.error("Error during the process:", error);
     await api.sendMessage(`❌ | Sorry, there was an error getting the music: ${error.message}`, event.threadID);
   }
 };
