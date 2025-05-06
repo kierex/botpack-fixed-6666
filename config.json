@@ -2,7 +2,7 @@
   "version": "1.7.6",
   "language": "en",
   "useEnvForCredentials": false,
-  "envGuide": "When useEnvForCredentials enabled, it will use the process.env key provided for email and password, which helps hide your credentials, you can find env in render's environment tab, you can also find it in replit secrets.",
+  "envGuide": "When useEnvForCredentials enabled, it will use the process.env key provided for email and password, which helps hide your credentials. You can find env in render's environment tab, you can also find it in replit secrets.",
   "DeveloperMode": true,
   "autoCreateDB": false,
   "allowInbox": false,
@@ -30,17 +30,16 @@
   "BOTNAME": "vern",
   "PREFIX": "+",
   "ADMINBOT": [
-    "UID HERE ADMIN",
-    "100070577903608",
-    "61564407593797",
+    "100070577903608", 
+    "61564407593797", 
     "100010099516674"
-  ],
+  ], 
   "DESIGN": {
     "Title": "VRAXYXX",
     "Theme": "BLUE",
     "Admin": "FIXED BY VRAX",
     "Setup": {
-      "Info": "Design your own custom terminal Titlebar for the title and must contain no numbers",
+      "Info": "Design your own custom terminal Titlebar for the title and must contain no numbers.",
       "Theme": "Customize your console effortlessly with various theme colors. Explore Aqua, Fiery, Blue, Orange, Pink, Red, Retro, Sunlight, Teen, Summer, Flower, Ghost, Purple, Rainbow, and Hacker themes to enhance your terminal logs."
     }
   },
@@ -82,11 +81,9 @@
     "YOUTUBE_API": "AIzaSyCqox-KXEwDncsuo2HIpE0MF8J7ATln5Vc",
     "SOUNDCLOUD_API": "M4TSyS6eV0AcMynXkA3qQASGcOFQTWub"
   },
-  "video": {
-    "YOUTUBE_API": "AIzaSyDEE1-zZSRVI8lTaQOVsIAQFgL-_BJKvhk"
-  },
-  "audio": {
-    "YOUTUBE_API": "AIzaSyDEE1-zZSRVI8lTaQOVsIAQFgL-_BJKvhk"
+  "media": {
+    "YOUTUBE_API": "AIzaSyDEE1-zZSRVI8lTaQOVsIAQFgL-_BJKvhk",
+    "SOUNDCLOUD_API": "M4TSyS6eV0AcMynXkA3qQASGcOFQTWub"
   },
   "menu": {
     "autoUnsend": true,
