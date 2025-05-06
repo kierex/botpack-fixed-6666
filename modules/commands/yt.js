@@ -9,7 +9,7 @@ module.exports.config = {
   version: "1.0.0",
   description: "Get YouTube video download link",
   usePrefix: true,
-  credits: "Jonell Magallanes",
+  credits: "Vern",
   cooldowns: 10,
   commandCategory: "Utility"
 };
@@ -35,7 +35,8 @@ module.exports.run = async function ({ api, event, args }) {
 
     await api.editMessage(`⏱️ | Video found: "${title}". Retrieving download link...`, findingMessage.messageID);
 
-    const apiUrl = `https://joncll.serv00.net/videodl.php?url=${url}`;
+    // Dynamically using the video URL from the search result
+    const apiUrl = `https://kaiz-apis.gleeze.com/api/ytdl?url=${encodeURIComponent(url)}`;
     const response = await axios.get(apiUrl);
     const { video } = response.data;
 
@@ -78,6 +79,7 @@ module.exports.run = async function ({ api, event, args }) {
       await api.sendMessage(`❌ | Sorry, there was an error downloading the video: ${error.message}`, event.threadID);
       fs.unlinkSync(filePath);
     });
+
   } catch (error) {
     console.error(error);
     await api.sendMessage(`❌ | Sorry, there was an error retrieving the video: ${error.message}`, event.threadID);
