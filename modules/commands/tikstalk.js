@@ -1,53 +1,81 @@
+const axios = require("axios");
+const fs = require("fs-extra");
+const path = require("path");
+
 module.exports.config = {
   name: "tikstalk",
   version: "1.0.0",
-  hasPermssion: "0",
-  credits: "Jonell Magallanes", 
-  description: "tiktok stalk",
+  hasPermssion: 0,
+  credits: "Vern (Fixed by ChatGPT)",
+  description: "Stalk TikTok user information",
   usePrefix: true,
   commandCategory: "tiktok",
-  usage: "[tikstalk username]",
+  usage: "[username]",
   cooldowns: 5,
 };
 
-const axios = require("axios");
-const fs = require("fs");
-const path = require("path");
-
 module.exports.run = async function ({ api, event, args }) {
-  const tiktokusername = args[0];
-  if (!tiktokusername) return api.sendMessage("Please provide a TikTok username.", event.threadID, event.messageID);
-       const lods = await api.sendMessage(" Getting User From Tiktok.....", event.threadID, event.messageID);
+  const username = args[0];
+  if (!username)
+    return api.sendMessage(
+      "❌ Please provide a TikTok username.\nExample: ?tikstalk jelly09",
+      event.threadID,
+      event.messageID
+    );
+
+  const waitingMsg = await api.sendMessage("🔍 Fetching TikTok user info...", event.threadID, event.messageID);
+
   try {
-    const res = await axios.get(`https://ccexplorerapisjonell.vercel.app/api/tikstalk?unique_id=${tiktokusername}`);
+    const res = await axios.get(`https://kaiz-apis.gleeze.com/api/tikstalk?username=${encodeURIComponent(username)}`);
     const data = res.data;
 
-    const filePath = path.resolve(__dirname, 'cache', `${data.username}_avatar.jpg`);
-    const writer = fs.createWriteStream(filePath);
+    if (!data || !data.username) {
+      return api.sendMessage("⚠️ Could not find TikTok user.", event.threadID, event.messageID);
+    }
 
-    const response = await axios({
+    const cacheDir = path.join(__dirname, "cache");
+    await fs.ensureDir(cacheDir);
+    const avatarPath = path.join(cacheDir, `${data.username}_avatar.jpg`);
+
+    const avatarRes = await axios({
       url: data.avatarLarger,
-      method: 'GET',
-      responseType: 'stream',
+      method: "GET",
+      responseType: "stream",
     });
 
-    response.data.pipe(writer);
+    const writer = fs.createWriteStream(avatarPath);
+    avatarRes.data.pipe(writer);
 
-    writer.on('finish', () => {
-      api.sendMessage({
-        body: `𝗧𝗶𝗸𝘁𝗼𝗸 𝗦𝘁𝗮𝗹𝗸 𝗨𝘀𝗲𝗿\n━━━━━━━━━━━━━━━━━━\nID: ${data.id}\nNickname: ${data.nickname}\nUsername: ${data.username}\nSignature: ${data.signature}\nVideo Count: ${data.videoCount}\nFollowing Count: ${data.followingCount}\nFollower Count: ${data.followerCount}\nHeart Count: ${data.heartCount}\n━━━━━━━━━━━━━━━━━━\n`,
-        attachment: fs.createReadStream(filePath),
-      }, event.threadID, () => {
-        fs.unlinkSync(filePath);
-      }, event.messageID);
+    writer.on("finish", async () => {
+      await api.sendMessage(
+        {
+          body:
+            `𝗧𝗶𝗸𝗧𝗼𝗸 𝗨𝘀𝗲𝗿 𝗜𝗻𝗳𝗼\n━━━━━━━━━━━━━━━\n` +
+            `ID: ${data.id}\n` +
+            `Username: ${data.username}\n` +
+            `Nickname: ${data.nickname}\n` +
+            `Signature: ${data.signature || "None"}\n` +
+            `Videos: ${data.videoCount}\n` +
+            `Followers: ${data.followerCount}\n` +
+            `Following: ${data.followingCount}\n` +
+            `Hearts: ${data.heartCount}`,
+          attachment: fs.createReadStream(avatarPath),
+        },
+        event.threadID,
+        () => fs.unlink(avatarPath),
+        event.messageID
+      );
+
+      api.unsendMessage(waitingMsg.messageID);
     });
-     api.unsendMessage(lods.messageID);
-    writer.on('error', (err) => {
-      console.error("Failed to write file:", err);
-      api.sendMessage(error.message, event.threadID, event.messageID);
+
+    writer.on("error", err => {
+      console.error("File write error:", err);
+      api.sendMessage("⚠️ Failed to process avatar image.", event.threadID, event.messageID);
     });
+
   } catch (error) {
-    console.error(error.message);
-    api.sendMessage(error.message, event.threadID, event.messageID);
+    console.error("TikTok API error:", error);
+    api.sendMessage("❌ Error fetching TikTok data. Please try again later.", event.threadID, event.messageID);
   }
 };
