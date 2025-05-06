@@ -1,92 +1,117 @@
-{
-  "version": "1.7.6",
-  "language": "en",
-  "useEnvForCredentials": false,
-  "envGuide": "When useEnvForCredentials enabled, it will use the process.env key provided for email and password, which helps hide your credentials. You can find env in render's environment tab, you can also find it in replit secrets.",
-  "DeveloperMode": true,
-  "autoCreateDB": false,
-  "allowInbox": false,
-  "autoClean": true,
-  "adminOnly": false,
-  "autoCensor": true,
-  "encryptSt": false,
-  "removeSt": false,
-  "UPDATE": {
-    "Package": true,
-    "EXCLUDED": [
-      "chalk",
-      "mqtt",
-      "https-proxy-agent"
-    ],
-    "Info": "This section manages the bot's automatic package updates. To disable this function, set 'Package' to false. If you only want to exclude specific packages, set them to true and add them in the 'EXCLUDED' list."
-  },
-  "commandDisabled": [
-    "gptauto.js",
-    "gtpgo.js",
-    "resend.js"
-  ],
-  "eventDisabled": [],
-  "OWNER": "OWNER OF BOT",
-  "BOTNAME": "vern",
-  "PREFIX": "+",
-  "ADMINBOT": [
-    "100070577903608", 
-    "61564407593797", 
-    "100010099516674"
-  ], 
-  "DESIGN": {
-    "Title": "VRAXYXX",
-    "Theme": "BLUE",
-    "Admin": "FIXED BY VRAX",
-    "Setup": {
-      "Info": "Design your own custom terminal Titlebar for the title and must contain no numbers.",
-      "Theme": "Customize your console effortlessly with various theme colors. Explore Aqua, Fiery, Blue, Orange, Pink, Red, Retro, Sunlight, Teen, Summer, Flower, Ghost, Purple, Rainbow, and Hacker themes to enhance your terminal logs."
-    }
-  },
-  "APPSTATEPATH": "appstate.json",
-  "DEL_FUNCTION": false,
-  "ADD_FUNCTION": true,
-  "FCAOption": {
-    "forceLogin": false,
-    "listenEvents": true,
-    "autoMarkDelivery": false,
-    "autoMarkRead": false,
-    "logLevel": "error",
-    "selfListen": false,
-    "online": true,
-    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_2) AppleWebKit/600.3.18 (KHTML, like Gecko) Version/8.0.3 Safari/600.3.18"
-  },
-  "daily": {
-    "cooldownTime": 43200000,
-    "rewardCoin": 500
-  },
-  "work": {
-    "cooldownTime": 1200000
-  },
-  "help": {
-    "autoUnsend": true,
-    "delayUnsend": 60
-  },
-  "adminUpdate": {
-    "autoUnsend": true,
-    "sendNoti": true,
-    "timeToUnsend": 10
-  },
-  "adminNoti": {
-    "autoUnsend": true,
-    "sendNoti": true,
-    "timeToUnsend": 10
-  },
-  "sing": {
-    "YOUTUBE_API": "AIzaSyCqox-KXEwDncsuo2HIpE0MF8J7ATln5Vc",
-    "SOUNDCLOUD_API": "M4TSyS6eV0AcMynXkA3qQASGcOFQTWub"
-  },
-  "media": {
-    "YOUTUBE_API": "AIzaSyDEE1-zZSRVI8lTaQOVsIAQFgL-_BJKvhk",
-    "SOUNDCLOUD_API": "M4TSyS6eV0AcMynXkA3qQASGcOFQTWub"
-  },
-  "menu": {
-    "autoUnsend": true,
-    "delayUnsend": 60
-  }
-}
+[{
+	"key": "datr",
+	"value": "JAUYaGmAZX8ohJg37_PM7-Hq",
+	"path": "/",
+	"hostOnly": false,
+	"domain": ".facebook.com",
+	"creation": "2025-05-06T06:53:49.652Z",
+	"lastAccessed": "2025-05-06T06:53:49.652Z"
+	},
+	{
+	"key": "sb",
+	"value": "JAUYaBHx9cFocSFBk-gL6LyQ",
+	"path": "/",
+	"hostOnly": false,
+	"domain": ".facebook.com",
+	"creation": "2025-05-06T06:53:49.652Z",
+	"lastAccessed": "2025-05-06T06:53:49.652Z"
+	},
+	{
+	"key": "m_pixel_ratio",
+	"value": "1.75",
+	"path": "/",
+	"hostOnly": false,
+	"domain": ".facebook.com",
+	"creation": "2025-05-06T06:53:49.652Z",
+	"lastAccessed": "2025-05-06T06:53:49.652Z"
+	},
+	{
+	"key": "wd",
+	"value": "412x915",
+	"path": "/",
+	"hostOnly": false,
+	"domain": ".facebook.com",
+	"creation": "2025-05-06T06:53:49.652Z",
+	"lastAccessed": "2025-05-06T06:53:49.652Z"
+	},
+	{
+	"key": "c_user",
+	"value": "61575631125879",
+	"path": "/",
+	"hostOnly": false,
+	"domain": ".facebook.com",
+	"creation": "2025-05-06T06:53:49.652Z",
+	"lastAccessed": "2025-05-06T06:53:49.652Z"
+	},
+	{
+	"key": "fr",
+	"value": "0KKGgquPTU53WWK7w.AWcm__PZtuedKmE93W-GXQP71SlFmPDeJ1auFWtE7LzLIJbQgUs.BoGAUk..AAA.0.0.BoGAU4.AWf7vUbzpfjbO4kcOqCQyo344Js",
+	"path": "/",
+	"hostOnly": false,
+	"domain": ".facebook.com",
+	"creation": "2025-05-06T06:53:49.652Z",
+	"lastAccessed": "2025-05-06T06:53:49.652Z"
+	},
+	{
+	"key": "xs",
+	"value": "9%3AjpqAByOQqM3Niw%3A2%3A1746404665%3A-1%3A-1",
+	"path": "/",
+	"hostOnly": false,
+	"domain": ".facebook.com",
+	"creation": "2025-05-06T06:53:49.652Z",
+	"lastAccessed": "2025-05-06T06:53:49.652Z"
+	},
+	{
+	"key": "locale",
+	"value": "en_US",
+	"path": "/",
+	"hostOnly": false,
+	"domain": ".facebook.com",
+	"creation": "2025-05-06T06:53:49.652Z",
+	"lastAccessed": "2025-05-06T06:53:49.652Z"
+	},
+	{
+	"key": "vpd",
+	"value": "v1%3B734x411x1.75",
+	"path": "/",
+	"hostOnly": false,
+	"domain": ".facebook.com",
+	"creation": "2025-05-06T06:53:49.652Z",
+	"lastAccessed": "2025-05-06T06:53:49.652Z"
+	},
+	{
+	"key": "ps_l",
+	"value": "1",
+	"path": "/",
+	"hostOnly": false,
+	"domain": ".facebook.com",
+	"creation": "2025-05-06T06:53:49.652Z",
+	"lastAccessed": "2025-05-06T06:53:49.652Z"
+	},
+	{
+	"key": "ps_n",
+	"value": "1",
+	"path": "/",
+	"hostOnly": false,
+	"domain": ".facebook.com",
+	"creation": "2025-05-06T06:53:49.652Z",
+	"lastAccessed": "2025-05-06T06:53:49.652Z"
+	},
+	{
+	"key": "fbl_st",
+	"value": "100436693%3BT%3A29107732",
+	"path": "/",
+	"hostOnly": false,
+	"domain": ".facebook.com",
+	"creation": "2025-05-06T06:53:49.652Z",
+	"lastAccessed": "2025-05-06T06:53:49.652Z"
+	},
+	{
+	"key": "wl_cbv",
+	"value": "v2%3Bclient_version%3A2806%3Btimestamp%3A1746463926",
+	"path": "/",
+	"hostOnly": false,
+	"domain": ".facebook.com",
+	"creation": "2025-05-06T06:53:49.652Z",
+	"lastAccessed": "2025-05-06T06:53:49.652Z"
+	}]
